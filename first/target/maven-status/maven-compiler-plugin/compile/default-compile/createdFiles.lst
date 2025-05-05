@@ -1,0 +1,8 @@
+com\chat\LoginApp.class
+module-info.class
+com\chat\CreateaccountApp.class
+com\chat\SecondaryController.class
+com\chat\App.class
+com\chat\ChatApp.class
+com\chat\DatabaseConnection.class
+com\chat\PrimaryController.class
