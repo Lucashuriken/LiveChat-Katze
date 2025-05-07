@@ -1,5 +1,6 @@
 package com.chat;
 import javafx.scene.input.KeyCode;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,11 +11,12 @@ import javafx.stage.Stage;
 
 public class LoginApp extends Application {
 
+
     @Override
     public void start(Stage stage) {
         // Criação dos componentes da tela
-        Label usernameLabel = new Label("Username:");
-        TextField usernameField = new TextField();
+        Label emailLabel = new Label("Email");
+        TextField emailField = new TextField();
         
         Label passwordLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
@@ -30,15 +32,28 @@ public class LoginApp extends Application {
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(usernameLabel, usernameField, passwordLabel, passwordField, buttonContainerBox);
+        layout.getChildren().addAll(emailLabel, emailField, passwordLabel, passwordField, buttonContainerBox);
 
         // Ação do botão de login
         loginButton.setOnAction(e -> {
-            String username = usernameField.getText();
+            try{
+            String email = emailField.getText();
             String password = passwordField.getText();
-            // Aqui você pode validar o login (por enquanto, só imprime)
-            System.out.println("Username: " + username);
-            System.out.println("Password: " + password);
+            // Aqui vamos validar o login 
+            User user = DatabaseManager.userAutenticator(email, password);
+            if(user != null){
+                CreateaccountApp.showAlertDone("Login","Login realizado");
+                Stage postLoginStage = new Stage();
+                new PostLoginScreen(user).start(postLoginStage);
+                stage.close();
+            }
+            else{
+                CreateaccountApp.showAlert("Login","Conta não encontrada");
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+            CreateaccountApp.showAlert("Erro", "Ocorreu um erro ao tentar realizar login. Tente novamente." + ex);
+        }
         });
         
         //Eventos de clique dos botões
