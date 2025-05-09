@@ -42,6 +42,7 @@ public class LoginApp extends Application {
             // Aqui vamos validar o login 
             User user = DatabaseManager.userAutenticator(email, password);
             if(user != null){
+                Session.setCurrentUser(user); // Armazena o usuário globalmente na sessão
                 CreateaccountApp.showAlertDone("Login","Login realizado");
                 Stage postLoginStage = new Stage();
                 new PostLoginScreen(user).start(postLoginStage);

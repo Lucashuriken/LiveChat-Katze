@@ -7,7 +7,7 @@ public class User {
     private String email;
     private String img;
 
-    public User(int id, String username, String status, String email, String img){
+    public User(int id, String username, String email, String status, String img){
     this.id = id;
     this.username = username;
     this.status = status;
@@ -18,11 +18,11 @@ public class User {
 
     public int getId(){return id;}
     public String getUsername(){return username;}
-    public String getStatus() { return status; }
     public String getEmail() {return email;}
+    public String getStatus() { return status; }
     public String getImg() {return img;}
     
-        public void setStatus(String status){
+          public void setStatus(String status){
             this.status = status;
-        }
+        } 
 }

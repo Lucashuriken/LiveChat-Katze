@@ -21,24 +21,19 @@ public class PostLoginScreen extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // 1. Header com foto e status
-        Image profileImage = new Image("https://i.pinimg.com/736x/c6/7c/e0/c67ce0f1ed761a07caf801be53bbb60f.jpg");  // Coloque a URL da foto do usuário aqui
-        ImageView profileImageView = new ImageView(profileImage);
-        profileImageView.setFitWidth(50);
-        profileImageView.setFitHeight(50);
-        Circle clip = new Circle(25, 25, 25);
-        profileImageView.setClip(clip);
+        User user = Session.getCurrentUser();
+        String emailUser = user.getEmail(); //Utilizado para criação de novos amigos;
+
+        // 1. Header com foto, nome e status
+        Image profileImage = new Image("https://i.pinimg.com/736x/c6/7c/e0/c67ce0f1ed761a07caf801be53bbb60f.jpg");  //exemplo de foto de perfil
+        ImageView profileImageView = applyStyle(new ImageView(profileImage));
        
+        Label nomeUsuario = new Label(user.getUsername()) ;
                         //Status setup
         //status style
-        Label statusLabel = new Label(user.getStatus() != null ? user.getStatus() : "Olá mundo"); 
+        Label statusLabel = new Label(user.getStatus() != "[null]" ? user.getStatus() : "Olá mundo"); 
         statusLabel.setStyle(
-        "-fx-background-color: #ffffff;" +  
-        "-fx-border-color: #cccccc;" +     
-        "-fx-border-radius: 5;" +           
-        "-fx-background-radius: 5;" +       
-        "-fx-padding: 5;"  +                 
-        "-fx-cursor: hand;");
+        "-fx-background-color: #ffffff;" +"-fx-border-color: #cccccc;" +"-fx-border-radius: 5;"+"-fx-background-radius: 5;"+"-fx-padding: 5;" +"-fx-cursor: hand;");
         //style hover
         UIUtils.applyHoverTransition(statusLabel, Color.TRANSPARENT, Color.web("#e6f2ff"), 100, 5);
         
@@ -46,8 +41,8 @@ public class PostLoginScreen extends Application {
         //config to change status
         UIUtils.showStatusPopup(statusLabel, statusLabel.getText());
         
-        HBox containerStatus = new HBox(5);
-        containerStatus.getChildren().addAll(statusLabel);
+        VBox containerStatus = new VBox(5);
+        containerStatus.getChildren().addAll(nomeUsuario,statusLabel);
         
         HBox header = new HBox(10);
         header.getChildren().addAll(profileImageView, containerStatus);
@@ -67,20 +62,33 @@ public class PostLoginScreen extends Application {
         contactsListView.getItems().addAll(DatabaseManager.getUserContacts(user.getEmail()));  // Exemplo de contatos
         contactsArea.getChildren().addAll(contactsLabel, contactsListView);
         
-        // 4. Botão de Logout
+        // 4. Botões
         Button btnLogout = new Button("Logout");
+        Button btnCriarGrupo = new Button("Criar Grupo");
+        Button btnCriarContato = new Button("Adicionar Contato");
+
+        HBox buttonContainerBottom = new HBox(10);
+        buttonContainerBottom.getChildren().addAll(btnLogout, btnCriarGrupo, btnCriarContato);
         btnLogout.setOnAction(event -> {
             System.out.println("Logout realizado");
+            
             primaryStage.close();
             new LoginApp().start(new Stage()); // Abrir a tela de login novamente, se necessário
         });
-        
+        btnCriarContato.setOnAction(e -> {
+            System.out.println("User: " + user);
+            System.out.println("Email: " + (user != null ? user.getEmail() : "null"));
+            UIUtils.showFriendPopup(btnCriarContato, emailUser);
+        });
+        btnCriarGrupo.setOnAction(e -> {
+        UIUtils.showCreateGroupPopup(btnCriarGrupo, emailUser);
+        });
         // 5. Layout principal
         HBox mainLayout = new HBox(20);  // O HBox vai organizar o aside e a área de contatos horizontalmente
         mainLayout.getChildren().addAll(aside, contactsArea);
         
         VBox root = new VBox(10);
-        root.getChildren().addAll(header, mainLayout, btnLogout);  // Colocando o header no topo, o mainLayout no meio e o botão no final
+        root.getChildren().addAll(header, mainLayout, buttonContainerBottom);  // Colocando o header no topo, o mainLayout no meio e o botão no final
         
         // Definindo a cena
         Scene scene = new Scene(root, 600, 400);
@@ -91,7 +99,13 @@ public class PostLoginScreen extends Application {
     
         
     }
-    
+    private static ImageView applyStyle(ImageView imageView) {
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        Circle clip = new Circle(25, 25, 25);  // Círculo para fazer a imagem redonda
+        imageView.setClip(clip);
+        return imageView;
+    }
     public static void main(String[] args) {
         launch(args);
     }

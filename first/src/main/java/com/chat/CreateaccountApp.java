@@ -77,7 +77,6 @@ public class CreateaccountApp extends Application {
         showAlert("Erro", "As senhas não coincidem.");
         return;
     }
-
     // Cadastro de usuário com retorno de status detalhado
     try {
         String resultado = DatabaseManager.insertUser(nome, password, email);
