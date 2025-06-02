@@ -1,4 +1,6 @@
 package com.chat;
+import java.util.Map;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,18 +14,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-public class PostLoginScreen extends Application {
+public class PostLoginScreen {
     private User user;
     
     public PostLoginScreen(User user){
         this.user = user;
     }
-
-    @Override
+    
     public void start(Stage primaryStage) {
         User user = Session.getCurrentUser();
         String emailUser = user.getEmail(); //Utilizado para criação de novos amigos;
-
+        
+        //int friendId =  DatabaseManager.getFriendId(user.getId());
         // 1. Header com foto, nome e status
         Image profileImage = new Image("https://i.pinimg.com/736x/c6/7c/e0/c67ce0f1ed761a07caf801be53bbb60f.jpg");  //exemplo de foto de perfil
         ImageView profileImageView = applyStyle(new ImageView(profileImage));
@@ -59,9 +61,21 @@ public class PostLoginScreen extends Application {
         VBox contactsArea = new VBox(10);
         Label contactsLabel = new Label("Contatos:");
         ListView<String> contactsListView = new ListView<>();
-        contactsListView.getItems().addAll(DatabaseManager.getUserContacts(user.getEmail()));  // Exemplo de contatos
+        Map<String, Integer> contactMap = DatabaseManager.getUserContactsNames(emailUser);
+        contactsListView.getItems().addAll(contactMap.keySet());  // Exemplo de contatos
         contactsArea.getChildren().addAll(contactsLabel, contactsListView);
-        
+        contactsListView.setOnMouseClicked(e -> {
+            if(e.getClickCount() == 2){
+                String selectedContact = contactsListView.getSelectionModel().getSelectedItem();
+                if (!contactMap.containsKey(selectedContact)){
+                    System.out.println("Não foi feita a associação chave(nome) : Valor (id_contato)");
+                }
+                else {
+                    new ChatWindow(user.getId(), contactMap.get(selectedContact), selectedContact);
+                }
+                
+            }
+        });
         // 4. Botões
         Button btnLogout = new Button("Logout");
         Button btnCriarGrupo = new Button("Criar Grupo");
@@ -106,7 +120,5 @@ public class PostLoginScreen extends Application {
         imageView.setClip(clip);
         return imageView;
     }
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 }

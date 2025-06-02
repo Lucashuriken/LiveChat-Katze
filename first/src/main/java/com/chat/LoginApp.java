@@ -1,4 +1,5 @@
 package com.chat;
+
 import javafx.scene.input.KeyCode;
 
 import javafx.application.Application;
@@ -41,8 +42,11 @@ public class LoginApp extends Application {
             String password = passwordField.getText();
             // Aqui vamos validar o login 
             User user = DatabaseManager.userAutenticator(email, password);
+            System.out.println("Usuário autenticado: " + (user != null ? user.getUsername() : "null"));
             if(user != null){
                 Session.setCurrentUser(user); // Armazena o usuário globalmente na sessão
+                ChatClient client = new ChatClient("localhost", 12345);
+                Session.setChatClient(client);
                 CreateaccountApp.showAlertDone("Login","Login realizado");
                 Stage postLoginStage = new Stage();
                 new PostLoginScreen(user).start(postLoginStage);

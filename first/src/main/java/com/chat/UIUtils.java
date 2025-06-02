@@ -135,4 +135,41 @@ public class UIUtils {
             criarGrupo.requestFocus(); // Focar no TextField
         });
     }
+
+    public static void showEmojiPopup(Button emojiButton, TextField messageField){
+                GridPane emojiGrid = new GridPane();
+        
+        //lista emoji
+        String[] emojisList = {
+            "😀", "😁", "😂", "🤣", "😅", 
+            "😊", "😍", "😎", "😭", "😡", 
+            "👍", "👎", "👀", "💪", "🔥",
+            "❤", "💔", "🎉", "💀", "🚀"
+        };
+        
+        int col = 0, row = 0;
+        
+        for(String emoji : emojisList){
+            Button emojiPress = new Button(emoji);
+            
+            emojiPress.setOnAction(e ->{
+                messageField.appendText(emoji);
+            });
+            emojiGrid.add(emojiPress, col, row);
+            col ++;
+            if(col > 4){
+                col = 0;
+                row ++;
+            };
+        }
+        emojiGrid.setVgap(5);
+        emojiGrid.setHgap(5);
+        emojiGrid.setStyle("-fx-padding: 10; -fx-background-color: white; -fx-border-color: gray;");
+
+        //criando a pop up dos emojis
+        Popup emojiPop = new Popup();
+        
+        emojiPop.setAutoHide(true);
+        emojiPop.getContent().add(emojiGrid);
+    }
 }
